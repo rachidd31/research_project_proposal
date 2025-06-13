@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { BookUser, BrainCircuit, Target, Users, DollarSign, Milestone, ChevronLeft, ChevronRight, Download, Printer, CheckCircle, Lightbulb } from 'lucide-react';
 
 // --- Données et Configuration (Extraites du guide) ---
@@ -161,8 +161,8 @@ const Stepper = ({ currentStep, totalSteps }: StepperProps) => (
 
 // --- Sections du Formulaire (Étapes) ---
 
-const Step1_Basics = ({ data, setData }: StepProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const Step1_Basics: React.FC<StepProps> = ({ data, setData }) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
@@ -179,8 +179,8 @@ const Step1_Basics = ({ data, setData }: StepProps) => {
   );
 };
 
-const Step2_Context = ({ data, setData }: StepProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+const Step2_Context: React.FC<StepProps> = ({ data, setData }) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
@@ -188,8 +188,8 @@ const Step2_Context = ({ data, setData }: StepProps) => {
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-2xl font-bold text-gray-800 flex items-center"><BrainCircuit className="mr-2 text-indigo-600"/>Contexte et Alignement Stratégique</h2>
-      <p className="text-gray-600">Positionnez votre projet par rapport à l'état de l'art et aux priorités nationales.</p>
-      
+      <p className="text-gray-600">Positionnez votre projet par rapport à l&apos;état de l&apos;art et aux priorités nationales.</p>
+
       <div className="relative w-full">
         <label htmlFor="strategicAxis" className="block text-sm font-medium text-gray-700 mb-1">Alignement avec les Axes Stratégiques Marocains</label>
         <div className="relative group flex items-center">
@@ -203,15 +203,15 @@ const Step2_Context = ({ data, setData }: StepProps) => {
             </div>
         </div>
       </div>
-      
-      <InputField id="axisJustification" label="Justification de l'Alignement" value={data.axisJustification} onChange={handleChange} type="textarea" placeholder="Expliquez en détail comment votre projet répond aux défis de l'axe stratégique sélectionné..." tooltip="Utilisez les mots-clés des documents officiels pour renforcer votre argumentation."/>
-      <InputField id="literatureReview" label="État de l'Art (Revue de la Littérature)" value={data.literatureReview} onChange={handleChange} type="textarea" placeholder="Synthétisez les recherches existantes sur le sujet. Montrez que vous maîtrisez le domaine..." tooltip="Une revue critique, et non une simple liste. Mettez en évidence les controverses et les limites des travaux précédents." />
+
+      <InputField id="axisJustification" label="Justification de l&apos;Alignement" value={data.axisJustification} onChange={handleChange} type="textarea" placeholder="Expliquez en détail comment votre projet répond aux défis de l'axe stratégique sélectionné..." tooltip="Utilisez les mots-clés des documents officiels pour renforcer votre argumentation."/>
+      <InputField id="literatureReview" label="État de l&apos;Art (Revue de la Littérature)" value={data.literatureReview} onChange={handleChange} type="textarea" placeholder="Synthétisez les recherches existantes sur le sujet. Montrez que vous maîtrisez le domaine..." tooltip="Une revue critique, et non une simple liste. Mettez en évidence les controverses et les limites des travaux précédents." />
       <InputField id="researchGap" label="Problématique et Lacune Scientifique" value={data.researchGap} onChange={handleChange} type="textarea" placeholder="Identifiez clairement le 'trou' dans les connaissances actuelles que votre projet vise à combler. Quelle est la question non résolue ?" tooltip="C'est la justification de l'originalité et de la nécessité de votre projet. Soyez explicite." />
     </div>
   );
 };
 
-const Step3_ProjectPlan = ({ data, setData }: StepProps) => {
+const Step3_ProjectPlan: React.FC<StepProps> = ({ data, setData }) => {
   const handleObjectiveChange = (id: number, value: string) => {
     const newObjectives = data.specificObjectives.map(obj => obj.id === id ? { ...obj, text: value } : obj);
     setData(prev => ({ ...prev, specificObjectives: newObjectives }));
@@ -259,7 +259,7 @@ const Step3_ProjectPlan = ({ data, setData }: StepProps) => {
           ))}
           <button onClick={addObjective} className="text-sm text-indigo-600 hover:text-indigo-800">+ Ajouter un objectif</button>
         </div>
-        <p className="text-xs text-gray-500 mt-1">Les objectifs spécifiques sont les étapes mesurables (SMART) pour atteindre l'objectif principal.</p>
+        <p className="text-xs text-gray-500 mt-1">Les objectifs spécifiques sont les étapes mesurables (SMART) pour atteindre l&apos;objectif principal.</p>
       </div>
 
       <InputField id="methodology" name="methodology" label="Approche Méthodologique" value={data.methodology} onChange={(e) => setData(prev => ({...prev, methodology: e.target.value}))} type="textarea" placeholder="Décrivez en détail les méthodes, techniques, protocoles, analyses de données, etc. que vous utiliserez. Justifiez vos choix." tooltip="Cette section doit convaincre de la faisabilité et de la rigueur scientifique de votre projet. Mentionnez les stratégies alternatives en cas de difficultés." />
@@ -281,8 +281,8 @@ const Step3_ProjectPlan = ({ data, setData }: StepProps) => {
   );
 };
 
-const Step4_Impact = ({ data, setData }: StepProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const Step4_Impact: React.FC<StepProps> = ({ data, setData }) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
@@ -298,8 +298,8 @@ const Step4_Impact = ({ data, setData }: StepProps) => {
   );
 };
 
-const Step5_Team = ({ data, setData }: StepProps) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const Step5_Team: React.FC<StepProps> = ({ data, setData }) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setData(prev => ({ ...prev, [name]: value }));
     };
@@ -323,7 +323,7 @@ const Step5_Team = ({ data, setData }: StepProps) => {
     return (
         <div className="space-y-6 animate-fade-in">
             <h2 className="text-2xl font-bold text-gray-800 flex items-center"><Users className="mr-2 text-indigo-600"/>Équipe du Projet</h2>
-            <p className="text-gray-600">Présentez le porteur du projet et les membres clés de l'équipe. Mettez en avant la complémentarité des expertises.</p>
+            <p className="text-gray-600">Présentez le porteur du projet et les membres clés de l&apos;équipe. Mettez en avant la complémentarité des expertises.</p>
             
             <div className="p-4 border rounded-lg space-y-4">
                 <h3 className="font-semibold text-lg text-gray-700">Porteur de Projet (Principal Investigator)</h3>
@@ -333,7 +333,7 @@ const Step5_Team = ({ data, setData }: StepProps) => {
             </div>
 
             <div className="p-4 border rounded-lg space-y-4">
-                <h3 className="font-semibold text-lg text-gray-700">Membres de l'Équipe</h3>
+                <h3 className="font-semibold text-lg text-gray-700">Membres de l&apos;Équipe</h3>
                 <div className="space-y-2">
                     {data.teamMembers.map((member) => (
                         <div key={member.id} className="grid grid-cols-1 md:grid-cols-6 gap-2 items-center">
@@ -349,7 +349,7 @@ const Step5_Team = ({ data, setData }: StepProps) => {
     );
 };
 
-const Step6_Budget = ({ data, setData }: StepProps) => {
+const Step6_Budget: React.FC<StepProps> = ({ data, setData }) => {
     const handleBudgetChange = (id: number, field: 'item' | 'justification' | 'cost', value: string) => {
         const newItems = data.budgetItems.map(item => item.id === id ? { ...item, [field]: value } : item);
         setData(prev => ({ ...prev, budgetItems: newItems }));
@@ -395,7 +395,7 @@ const Step6_Budget = ({ data, setData }: StepProps) => {
                     Coût Total Estimé: {totalCost.toLocaleString('fr-MA')} MAD
                 </div>
             </div>
-             <p className="text-xs text-gray-500 mt-1">Vérifiez les catégories de dépenses éligibles/inéligibles dans l'appel à projets. Soyez réaliste.</p>
+             <p className="text-xs text-gray-500 mt-1">Vérifiez les catégories de dépenses éligibles/inéligibles dans l&apos;appel à projets. Soyez réaliste.</p>
         </div>
     );
 };
@@ -497,7 +497,7 @@ const Step7_Review = ({ data }: ReviewStepProps) => {
                     </button>
                 </div>
             </div>
-            <p className="text-gray-600">Veuillez relire attentivement toutes les sections de votre proposition. C'est la dernière étape avant l'exportation. Une relecture par un collègue est fortement recommandée.</p>
+            <p className="text-gray-600">Veuillez relire attentivement toutes les sections de votre proposition. C&apos;est la dernière étape avant l&apos;exportation. Une relecture par un collègue est fortement recommandée.</p>
 
             <div ref={proposalRef} className="p-6 bg-white border border-gray-200 rounded-lg shadow-inner space-y-8 text-gray-800">
                 <h1 className="text-center text-2xl font-bold mb-4">{data.title || "Titre du Projet"}</h1>
@@ -513,7 +513,7 @@ const Step7_Review = ({ data }: ReviewStepProps) => {
                     <h3 className="font-bold text-lg border-b pb-1 mb-2">2. Contexte et Alignement Stratégique</h3>
                     <p><strong>Axe Stratégique:</strong> {data.strategicAxis}</p>
                     <p className="mt-2"><strong>Justification:</strong><br/>{data.axisJustification.split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}</p>
-                    <p className="mt-2"><strong>État de l'art:</strong><br/>{data.literatureReview.split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}</p>
+                    <p className="mt-2"><strong>État de l&apos;art:</strong><br/>{data.literatureReview.split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}</p>
                     <p className="mt-2"><strong>Problématique:</strong><br/>{data.researchGap.split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}</p>
                 </section>
 
