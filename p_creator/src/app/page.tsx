@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { BookUser, BrainCircuit, Target, Beaker, Users, DollarSign, Milestone, ChevronLeft, ChevronRight, Download, Printer, CheckCircle, Lightbulb } from 'lucide-react';
+import { BookUser, BrainCircuit, Target, Users, DollarSign, Milestone, ChevronLeft, ChevronRight, Download, Printer, CheckCircle, Lightbulb } from 'lucide-react';
 
 // --- Données et Configuration (Extraites du guide) ---
 const STRATEGIC_AXES = [
