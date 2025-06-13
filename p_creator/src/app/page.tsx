@@ -15,7 +15,56 @@ const STRATEGIC_AXES = [
   "Technologies avancées, industrie et transformation numérique (IA, Aéronautique, etc.)"
 ];
 
-const INITIAL_PROPOSAL_STATE = {
+// --- Définitions des types de données ---
+interface SpecificObjective {
+  id: number;
+  text: string;
+}
+
+interface TimelineItem {
+  id: number;
+  task: string;
+  duration: string;
+}
+
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+}
+
+interface BudgetItem {
+  id: number;
+  item: string;
+  justification: string;
+  cost: string;
+}
+
+interface ProposalData {
+  title: string;
+  acronym: string;
+  abstract: string;
+  keywords: string;
+  strategicAxis: string;
+  axisJustification: string;
+  literatureReview: string;
+  researchGap: string;
+  mainObjective: string;
+  specificObjectives: SpecificObjective[];
+  methodology: string;
+  timeline: TimelineItem[];
+  expectedOutcomes: string;
+  socioEconomicImpact: string;
+  disseminationPlan: string;
+  piName: string;
+  piAffiliation: string;
+  piEmail: string;
+  teamMembers: TeamMember[];
+  budgetItems: BudgetItem[];
+}
+
+// --- État initial du formulaire ---
+const INITIAL_PROPOSAL_STATE: ProposalData = {
   title: '',
   acronym: '',
   abstract: '',
@@ -38,35 +87,61 @@ const INITIAL_PROPOSAL_STATE = {
   budgetItems: [{ id: 1, item: '', justification: '', cost: '' }],
 };
 
+// --- Type pour les props des composants d'étape ---
+interface StepProps {
+    data: ProposalData;
+    setData: React.Dispatch<React.SetStateAction<ProposalData>>;
+}
+
 
 // --- Composants de l'interface utilisateur ---
 
-const Tooltip = ({ text }) => (
+interface TooltipProps {
+  text: string;
+}
+
+const Tooltip = ({ text }: TooltipProps) => (
   <span className="absolute left-1/2 -translate-x-1/2 -top-10 w-max max-w-xs p-2 text-xs text-white bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
     {text}
   </span>
 );
 
-const InputField = ({ id, label, value, onChange, placeholder, type = 'text', tooltip }) => (
+interface InputFieldProps {
+  id: string;
+  name?: string; // name should be optional as it's the same as id
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  placeholder: string;
+  type?: string;
+  tooltip?: string;
+}
+
+const InputField = ({ id, name, label, value, onChange, placeholder, type = 'text', tooltip }: InputFieldProps) => (
   <div className="relative w-full">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
     <div className="relative group flex items-center">
       {type === 'textarea' ? (
-        <textarea id={id} name={id} value={value} onChange={onChange} placeholder={placeholder} rows="6" className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition"></textarea>
+        <textarea id={id} name={name || id} value={value} onChange={onChange} placeholder={placeholder} rows={6} className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition"></textarea>
       ) : (
-        <input type={type} id={id} name={id} value={value} onChange={onChange} placeholder={placeholder} className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition" />
+        <input type={type} id={id} name={name || id} value={value} onChange={onChange} placeholder={placeholder} className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition" />
       )}
       {tooltip && (
         <div className="absolute right-3">
-          <Lightbulb className="h-5 w-5 text-yellow-400" />
-          <Tooltip text={tooltip} />
+            <Lightbulb className="h-5 w-5 text-yellow-400" />
+            <Tooltip text={tooltip} />
         </div>
       )}
     </div>
   </div>
 );
 
-const Stepper = ({ currentStep, totalSteps }) => (
+interface StepperProps {
+  currentStep: number;
+  totalSteps: number;
+}
+
+const Stepper = ({ currentStep, totalSteps }: StepperProps) => (
   <div className="w-full mb-8">
     <div className="flex justify-between items-center">
       {Array.from({ length: totalSteps }, (_, i) => (
@@ -86,8 +161,8 @@ const Stepper = ({ currentStep, totalSteps }) => (
 
 // --- Sections du Formulaire (Étapes) ---
 
-const Step1_Basics = ({ data, setData }) => {
-  const handleChange = (e) => {
+const Step1_Basics = ({ data, setData }: StepProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
@@ -104,8 +179,8 @@ const Step1_Basics = ({ data, setData }) => {
   );
 };
 
-const Step2_Context = ({ data, setData }) => {
-  const handleChange = (e) => {
+const Step2_Context = ({ data, setData }: StepProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
@@ -136,8 +211,8 @@ const Step2_Context = ({ data, setData }) => {
   );
 };
 
-const Step3_ProjectPlan = ({ data, setData }) => {
-  const handleObjectiveChange = (id, value) => {
+const Step3_ProjectPlan = ({ data, setData }: StepProps) => {
+  const handleObjectiveChange = (id: number, value: string) => {
     const newObjectives = data.specificObjectives.map(obj => obj.id === id ? { ...obj, text: value } : obj);
     setData(prev => ({ ...prev, specificObjectives: newObjectives }));
   };
@@ -145,13 +220,13 @@ const Step3_ProjectPlan = ({ data, setData }) => {
     const newId = (data.specificObjectives.length > 0 ? Math.max(...data.specificObjectives.map(o => o.id)) : 0) + 1;
     setData(prev => ({ ...prev, specificObjectives: [...prev.specificObjectives, { id: newId, text: '' }] }));
   };
-  const removeObjective = (id) => {
+  const removeObjective = (id: number) => {
     if (data.specificObjectives.length > 1) {
       setData(prev => ({ ...prev, specificObjectives: data.specificObjectives.filter(obj => obj.id !== id) }));
     }
   };
 
-  const handleTimelineChange = (id, field, value) => {
+  const handleTimelineChange = (id: number, field: 'task' | 'duration', value: string) => {
     const newTimeline = data.timeline.map(item => item.id === id ? { ...item, [field]: value } : item);
     setData(prev => ({...prev, timeline: newTimeline}));
   }
@@ -159,7 +234,7 @@ const Step3_ProjectPlan = ({ data, setData }) => {
      const newId = (data.timeline.length > 0 ? Math.max(...data.timeline.map(o => o.id)) : 0) + 1;
      setData(prev => ({...prev, timeline: [...prev.timeline, {id: newId, task: '', duration: ''}]}))
   }
-  const removeTimelineTask = (id) => {
+  const removeTimelineTask = (id: number) => {
      if (data.timeline.length > 1) {
         setData(prev => ({...prev, timeline: data.timeline.filter(item => item.id !== id)}));
      }
@@ -206,8 +281,8 @@ const Step3_ProjectPlan = ({ data, setData }) => {
   );
 };
 
-const Step4_Impact = ({ data, setData }) => {
-  const handleChange = (e) => {
+const Step4_Impact = ({ data, setData }: StepProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
   };
@@ -223,13 +298,13 @@ const Step4_Impact = ({ data, setData }) => {
   );
 };
 
-const Step5_Team = ({ data, setData }) => {
-    const handleChange = (e) => {
+const Step5_Team = ({ data, setData }: StepProps) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setData(prev => ({ ...prev, [name]: value }));
     };
     
-    const handleMemberChange = (id, field, value) => {
+    const handleMemberChange = (id: number, field: 'name' | 'role', value: string) => {
         const newMembers = data.teamMembers.map(member => member.id === id ? { ...member, [field]: value } : member);
         setData(prev => ({ ...prev, teamMembers: newMembers }));
     };
@@ -239,7 +314,7 @@ const Step5_Team = ({ data, setData }) => {
         setData(prev => ({ ...prev, teamMembers: [...prev.teamMembers, { id: newId, name: '', role: '' }] }));
     };
 
-    const removeMember = (id) => {
+    const removeMember = (id: number) => {
         if (data.teamMembers.length > 1) {
             setData(prev => ({ ...prev, teamMembers: data.teamMembers.filter(member => member.id !== id) }));
         }
@@ -274,8 +349,8 @@ const Step5_Team = ({ data, setData }) => {
     );
 };
 
-const Step6_Budget = ({ data, setData }) => {
-    const handleBudgetChange = (id, field, value) => {
+const Step6_Budget = ({ data, setData }: StepProps) => {
+    const handleBudgetChange = (id: number, field: 'item' | 'justification' | 'cost', value: string) => {
         const newItems = data.budgetItems.map(item => item.id === id ? { ...item, [field]: value } : item);
         setData(prev => ({ ...prev, budgetItems: newItems }));
     };
@@ -285,7 +360,7 @@ const Step6_Budget = ({ data, setData }) => {
         setData(prev => ({ ...prev, budgetItems: [...prev.budgetItems, { id: newId, item: '', justification: '', cost: '' }] }));
     };
 
-    const removeBudgetItem = (id) => {
+    const removeBudgetItem = (id: number) => {
         if (data.budgetItems.length > 1) {
             setData(prev => ({ ...prev, budgetItems: data.budgetItems.filter(item => item.id !== id) }));
         }
@@ -325,8 +400,12 @@ const Step6_Budget = ({ data, setData }) => {
     );
 };
 
-const Step7_Review = ({ data }) => {
-    const proposalRef = React.useRef(null);
+interface ReviewStepProps {
+    data: ProposalData;
+}
+
+const Step7_Review = ({ data }: ReviewStepProps) => {
+    const proposalRef = React.useRef<HTMLDivElement>(null);
     const [copied, setCopied] = useState(false);
 
     const formatProposal = () => {
@@ -388,15 +467,19 @@ const Step7_Review = ({ data }) => {
     };
 
     const handlePrint = () => {
-        const printableContent = proposalRef.current.innerHTML;
-        const printWindow = window.open('', '', 'height=600,width=800');
-        printWindow.document.write('<html><head><title>Proposition de Projet</title>');
-        printWindow.document.write('<style>body{font-family: sans-serif; line-height: 1.5;} h1,h2,h3{color: #333;} h2{border-bottom: 1px solid #eee; padding-bottom: 5px;} table{width: 100%; border-collapse: collapse;} th,td{border: 1px solid #ddd; padding: 8px; text-align: left;}</style>');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(printableContent);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.print();
+        if(proposalRef.current) {
+            const printableContent = proposalRef.current.innerHTML;
+            const printWindow = window.open('', '', 'height=600,width=800');
+            if(printWindow) {
+                printWindow.document.write('<html><head><title>Proposition de Projet</title>');
+                printWindow.document.write('<style>body{font-family: sans-serif; line-height: 1.5;} h1,h2,h3{color: #333;} h2{border-bottom: 1px solid #eee; padding-bottom: 5px;} table{width: 100%; border-collapse: collapse;} th,td{border: 1px solid #ddd; padding: 8px; text-align: left;}</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write(printableContent);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
     };
 
     const totalCost = data.budgetItems.reduce((acc, item) => acc + (parseFloat(item.cost) || 0), 0);
@@ -463,9 +546,9 @@ const Step7_Review = ({ data }) => {
                     <table className="w-full text-sm">
                         <thead><tr className="bg-gray-100"><th className="p-2">Poste</th><th className="p-2">Justification</th><th className="p-2 text-right">Coût (MAD)</th></tr></thead>
                         <tbody>
-                            {data.budgetItems.map(i => <tr key={i.id}><td className="p-2">{i.item}</td><td className="p-2">{i.justification}</td><td className="p-2 text-right">{parseFloat(i.cost || 0).toLocaleString('fr-MA')}</td></tr>)}
+                            {data.budgetItems.map(i => <tr key={i.id}><td className="p-2">{i.item}</td><td className="p-2">{i.justification}</td><td className="p-2 text-right">{parseFloat(i.cost || "0").toLocaleString('fr-MA')}</td></tr>)}
                         </tbody>
-                        <tfoot><tr className="font-bold bg-gray-100"><td colSpan="2" className="p-2 text-right">TOTAL</td><td className="p-2 text-right">{totalCost.toLocaleString('fr-MA')}</td></tr></tfoot>
+                        <tfoot><tr className="font-bold bg-gray-100"><td colSpan={2} className="p-2 text-right">TOTAL</td><td className="p-2 text-right">{totalCost.toLocaleString('fr-MA')}</td></tr></tfoot>
                     </table>
                 </section>
             </div>
@@ -478,7 +561,7 @@ const Step7_Review = ({ data }) => {
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [proposalData, setProposalData] = useState(INITIAL_PROPOSAL_STATE);
+  const [proposalData, setProposalData] = useState<ProposalData>(INITIAL_PROPOSAL_STATE);
   const totalSteps = 7;
 
   const nextStep = () => {
@@ -527,11 +610,11 @@ export default function App() {
           
           <div className="mt-10 pt-6 border-t flex justify-between items-center">
              <button
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              className="flex items-center px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="mr-2 h-5 w-5" /> Précédent
+               onClick={prevStep}
+               disabled={currentStep === 1}
+               className="flex items-center px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+             >
+               <ChevronLeft className="mr-2 h-5 w-5" /> Précédent
             </button>
             
             {currentStep < totalSteps ? (
